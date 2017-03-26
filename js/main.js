@@ -1,30 +1,4 @@
 $(function(){
-    function clear(){
-        $('#input').val('');
-        var shaObj = new jsSHA('SHA-256', "TEXT");
-        shaObj.update('');
-        $('#output').val(shaObj.getHash("HEX"));
-    }
-    clear();
-    $('#clear').click(clear);
-
-
-    $('#input').keyup(function(){
-        var input   = $('#input').val();
-        var lines   = input.replace('\r', '').split('\n');
-        var result  = [];
-
-        for (var i = 0; i < lines.length; i++) {
-            var shaObj = new jsSHA('SHA-256', "TEXT");
-            shaObj.update(lines[i]);
-            result.push(shaObj.getHash("HEX"));
-        };
-
-        $('#output').val(result.join('\n'));
-    });
-
-
-
     function validate_sha256js(){
         // Sample vectors below comes from http://www.di-mgt.com.au/sha_testvectors.html .
         //
@@ -54,7 +28,6 @@ $(function(){
     }
 
 
-
     (function invoke_validation(){
         var result = $('#resultOfValidation');
         if (validate_sha256js()) {
@@ -70,7 +43,51 @@ $(function(){
                 font_weight: 'bold'
             });
         }
-
-
     })();
+
+
+    function normalize(){
+        var input   = $('#input').val();
+        var lines   = input.replace('\r', '').split('\n');
+        var result  = [];
+
+        for (var i = 0; i < lines.length; i++) {
+            var match_result = lines[i].match(/^\s*([0-9]{1,10})\s*$/)
+            if (match_result) {
+                result.push(('0000000000' + match_result[1]).slice(-10))
+            } else {
+                result.push(lines[i]);
+            }
+        };
+
+        $('#input').val(result.join('\n'));
+        update_hash();
+    }
+    $('#normalize').click(normalize);
+
+
+    function clear(){
+        $('#input').val('');
+        var shaObj = new jsSHA('SHA-256', "TEXT");
+        shaObj.update('');
+        $('#output').val(shaObj.getHash("HEX"));
+    }
+    clear();
+    $('#clear').click(clear);
+
+
+    function update_hash(){
+        var input   = $('#input').val();
+        var lines   = input.replace('\r', '').split('\n');
+        var result  = [];
+
+        for (var i = 0; i < lines.length; i++) {
+            var shaObj = new jsSHA('SHA-256', "TEXT");
+            shaObj.update(lines[i]);
+            result.push(shaObj.getHash("HEX"));
+        };
+
+        $('#output').val(result.join('\n'));
+    }
+    $('#input').keyup(update_hash);
 });
