@@ -1,4 +1,6 @@
 $(function(){
+    "use strict";
+    
     function validate_sha256js(){
         // Sample vectors below comes from http://www.di-mgt.com.au/sha_testvectors.html .
         //
